@@ -1,12 +1,13 @@
 """ __init__.py """
 from flask import Flask, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from config import config
 
-APP = Flask(__name__)
+db = SQLAlchemy()
 
-@APP.route('/', methods=['GET'])
-def index():
-    """ initial dummy route """
-    return jsonify({
-        'status': 'success',
-        'message': 'this was a success'
-    })
+def create_app(config_name):
+    """ Application Factory """
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
+    db.init_app(app)
+    return app
