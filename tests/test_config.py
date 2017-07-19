@@ -16,6 +16,8 @@ class TestDevelopmentConfig(TestCase):
         """ test development configuration """
         self.assertFalse(current_app is None)
         self.assertTrue(APP.config['DEBUG'] is True)
+        self.assertTrue(APP.config['SQLALCHEMY_DATABASE_URI'] ==
+                        'postgresql://postgres:qwerty@localhost:5432/bucketlist')
 
 
 
