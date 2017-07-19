@@ -1,9 +1,9 @@
 """ manage.py """
 from flask_script import Manager
 
-from app import APP
+from app import create_app, db
 
-APP.config.from_object('config.DevelopmentConfig')
+APP = create_app('default')
 
 manager = Manager(APP)
 
