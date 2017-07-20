@@ -1,23 +1,34 @@
 """ unit tests for config.py """
 
+import unittest
+
 from flask import current_app
-from flask_testing import TestCase
+from app import create_app, db
 
-from  app import APP
+class ConfigTestCase(unittest.TestCase):
+    """ unit tests for basic config and setup"""
+    def setUp(self):
+        """initial setup before a test is run """
+        self.app = create_app('testing')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
 
-class TestDevelopmentConfig(TestCase):
-    """ unit tests for Developement config """
-    def create_app(self):
-        """Flask testing intialization """
-        APP.config.from_object('config.DevelopmentConfig')
-        return APP
+    def tearDown(self):
+        """executes  after a test is run """
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
 
-    def test_app_is_development(self):
-        """ test development configuration """
+    def test_app_exists(self):
+        """ test if app exists"""
         self.assertFalse(current_app is None)
-        self.assertTrue(APP.config['DEBUG'] is True)
-        self.assertTrue(APP.config['SQLALCHEMY_DATABASE_URI'] ==
-                        'postgresql://postgres:qwerty@localhost:5432/bucketlist')
+
+    def test_app_is_testing(self):
+        """ test if app config is testing """
+        self.assertFalse(self.app.config['DEBUG'])
+        self.assertTrue(self.app.config['SQLALCHEMY_DATABASE_URI'] ==
+                        'postgresql://postgres:qwerty@localhost:5432/bucketlist_test')
 
 
 
