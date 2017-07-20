@@ -1,8 +1,9 @@
 """ unit tests for the user model """
+from sqlalchemy.exc import IntegrityError
 from app import db
 from app.models import Users
 from .test_config import ConfigTestCase
-from sqlalchemy.exc import IntegrityError
+
 
 class UsersTestCase(ConfigTestCase):
     """ unit tests for the user model """
