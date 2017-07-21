@@ -1,0 +1,17 @@
+language: python
+#version
+python:
+  - "2.7"
+cache: pip
+services:
+  - postgresql
+env:
+  - DATABASE_TEST_URL=postgresql://localhost/travis_ci_test
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
+install:
+  - pip install -r requirements.txt
+script:
+  - nosetests --with-coverage --cover-package=app
+
+after_success: coveralls
