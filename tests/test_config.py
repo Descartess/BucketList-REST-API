@@ -27,9 +27,4 @@ class ConfigTestCase(unittest.TestCase):
     def test_app_is_testing(self):
         """ test if app config is testing """
         self.assertFalse(self.app.config['DEBUG'])
-        self.assertTrue(self.app.config['SQLALCHEMY_DATABASE_URI'] ==
-                        'postgresql://postgres:qwerty@localhost:5432/bucketlist_test')
-
-
-
-
+        
