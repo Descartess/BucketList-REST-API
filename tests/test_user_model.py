@@ -2,10 +2,10 @@
 from sqlalchemy.exc import IntegrityError
 from app import db
 from app.models import Users
-from .test_config import ConfigTestCase
+from .test_base import BaseTestCase
 
 
-class UsersTestCase(ConfigTestCase):
+class UsersTestCase(BaseTestCase):
     """ unit tests for the user model """
     def test_add_user(self):
         """ Ensure that user is added """

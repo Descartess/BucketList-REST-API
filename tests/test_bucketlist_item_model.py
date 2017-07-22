@@ -1,9 +1,9 @@
 """ unit tests for BucketList items model"""
 from app.models import Users, BucketLists, BucketListItems
 from app import db
-from .test_config import ConfigTestCase
+from .test_base import BaseTestCase
 
-class BucketListTestCase(ConfigTestCase):
+class BucketListTestCase(BaseTestCase):
     """ unit tests for BucketList items model"""
     def test_add_bucketlist(self):
         """ Ensure that user can add bucket list item """
