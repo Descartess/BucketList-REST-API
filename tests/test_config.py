@@ -12,4 +12,7 @@ class ConfigTestCase(BaseTestCase):
     def test_app_is_testing(self):
         """ test if app config is testing """
         self.assertFalse(self.app.config['DEBUG'])
+        self.assertEqual(4,self.app.config['BCRYPT_LOG_ROUNDS'])
+        self.assertEqual(5,self.app.config['TOKEN_EXPIRATION_SECONDS'])
+        self.assertEqual(0,self.app.config['TOKEN_EXPIRATION_DAYS'])
         
