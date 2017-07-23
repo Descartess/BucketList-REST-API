@@ -19,6 +19,12 @@ def register():
         return jsonify(response_object), 400
     username = post_data.get('username')
     password = post_data.get('password')
+    if not username or not password:
+        response_object = {
+            'status': 'Fail',
+            'message': "Invalid payload"
+        }
+        return jsonify(response_object), 400
     try:
         user = Users.query.filter_by(username=username).first()
         if not user:
@@ -37,8 +43,4 @@ def register():
             return jsonify(response_object), 400
     except IntegrityError:
         db.session().rollback()
-        response_object = {
-            'status': 'Fail',
-            'message': "Invalid payload"
-        }
-        return jsonify(response_object), 400
+        
