@@ -14,11 +14,11 @@ def create_app(config_name):
     # instantiate the app
     app = Flask(__name__)
     app.config.from_object(config[config_name])
-    # set up the extensions 
+    # set up the extensions
     db.init_app(app)
     bcrypt.init_app(app)
-    
-    #register blueprints
+
+    # register blueprints
     from app.api.auth import auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     return app
