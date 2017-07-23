@@ -7,7 +7,7 @@ class BucketListTestCase(BaseTestCase):
     """ unit tests for BucketList items model"""
     def test_add_bucketlist(self):
         """ Ensure that user can add bucket list item """
-        user = Users(username="Jane")
+        user = Users(username="Jane", password="test123")
         bucketlist = BucketLists(name="Adventure", completed_by=25, owner=user)
         item = BucketListItems(name="Climb Mt.Kilimanjaro", bucket_list=bucketlist)
         db.session.add_all([user, bucketlist, item])
