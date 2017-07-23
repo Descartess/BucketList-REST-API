@@ -3,10 +3,12 @@ from sqlalchemy.exc import IntegrityError
 from app import db
 from app.models import Users
 from .test_base import BaseTestCase
+from .test_utils import add_user
 
 
 class UsersTestCase(BaseTestCase):
     """ unit tests for the user model """
+
     def test_add_user(self):
         """ Ensure that user is added """
         user = Users(username="Paul", password="password")
@@ -27,14 +29,22 @@ class UsersTestCase(BaseTestCase):
 
     def test_missing_password(self):
         """ Ensure that an error is returned on missing password """
-        user = Users(username="Paul")
-        db.session.add(user)
-        with self.assertRaises(IntegrityError):
-            db.session.commit()
+        with self.assertRaises(TypeError):
+            user = Users(username="Paul")
 
     def test_missing_username(self):
         """ Ensure that an error is returned on missing username """
-        user = Users(password="Paul")
-        db.session.add(user)
-        with self.assertRaises(IntegrityError):
-            db.session.commit()
+        with self.assertRaises(TypeError):
+            user = Users(password="Paul")
+
+    def test_encode_auth_token(self):
+        """ Ensure that authentication token is returned after user registration """
+        user = add_user(username="Paul", password="password")
+        auth_token = user.encode_auth_token(user.id)
+        self.assertTrue(isinstance(auth_token, bytes))
+
+    def test_decode_auth_token(self):
+        """ Ensure that authentication token is correctly decoded """
+        user = add_user(username="Paul", password="password")
+        auth_token = user.encode_auth_token(user.id)
+        self.assertTrue(Users.decode_auth_token(auth_token), user.id)
