@@ -63,6 +63,15 @@ class BucketLists(db.Model):
     bucket_lists_items = db.relationship(
         'BucketListItems', backref="bucket_list", lazy="dynamic")
 
+    def to_json(self):
+        """ Convert bucket list model to json format """
+        json_data = {
+            'id' : self.id,
+            'name' :self.name,
+            'completed_by' : self.completed_by
+        }
+        return json_data
+
 
 class BucketListItems(db.Model):
     """ Model for bucket list items """
@@ -71,3 +80,12 @@ class BucketListItems(db.Model):
     name = db.Column(db.String(64), nullable=False)
     completed = db.Column(db.Boolean, default=False, nullable=False)
     bucketlist_id = db.Column(db.Integer, db.ForeignKey('bucketlists.id'))
+
+    def to_json(self):
+        """ Convert bucket list item model to json format """
+        json_data = {
+            'id' : self.id,
+            'name' :self.name,
+            'completed' : self.completed
+        }
+        return json_data
