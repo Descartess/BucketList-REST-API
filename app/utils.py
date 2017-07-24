@@ -4,12 +4,14 @@ from flask import jsonify, request
 from app import db
 from app.models import Users
 
+
 def add_user(username, password):
     """ Utility function that adds users to database """
     user = Users(username=username, password=password)
     db.session.add(user)
     db.session.commit()
     return user
+
 
 def validate_auth_json(function):
     """ decorator function to validate authentication json """
@@ -24,16 +26,28 @@ def validate_auth_json(function):
                     'message': 'Invalid payload',
                     'token': None
                 }
-                return jsonify(response_object),400
+                return jsonify(response_object), 400
         return function(*args, **kwargs)
     return decorated
+
 
 def login_required(function):
     """ utility  decorator function to check is user is authenticated """
     def decorated(*args, **kwargs):
         """ decorator function logic """
-        return function(*args, **kwargs)
+        response_object = {
+            'message': 'Provide valid auth Token'
+        }
+        auth_header = request.headers.get('Authorization')
+        if not auth_header:
+            return jsonify(response_object), 401
+        auth_token = auth_header.split(" ")[1]
+        user_id = Users.decode_auth_token(auth_token)
+        if isinstance(user_id, str):
+            response_object['message'] = user_id
+            return jsonify(response_object), 401
+        user = Users.query.filter_by(id=user_id).first()
+        if not user:
+            return jsonify(response_object), 401
+        return function(user, *args, **kwargs)
     return decorated
-
-
-
