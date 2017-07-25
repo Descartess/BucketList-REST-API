@@ -22,9 +22,14 @@ def post_get_bucketlist(user):
             'status': 'Success'
         }
         return jsonify(reponse_object), 201
-    # api searching based on name attribute
     q = request.args.get('q')
-    if q:
+    limit = request.args.get('limit')
+    # add pagination support using a limit parameter
+    if limit:
+        bucketlists = BucketLists.query.filter_by(owner=user).limit(int(limit))
+        return jsonify({'bucketlists': [bucketlist.to_json() for bucketlist in bucketlists]})
+    elif q:
+        # api searching based on name attribute
         bucketlists = BucketLists.query.filter(
             BucketLists.name.ilike("%" + q + "%"), BucketLists.owner == user).all()
         return jsonify({'search_results': [bucketlist.to_json() for bucketlist in bucketlists]})
