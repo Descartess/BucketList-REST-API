@@ -167,6 +167,26 @@ class TestBucketListCase(BaseTestCase):
                 "name": "Career",
                 "completed_by": 30
             }]})
-         
 
-
+    def test_pagination(self):
+        """ Ensure that pagination works as expected """
+        bucketlists = [
+            {"name": "Adventure", "completed_by":25},
+            {"name": "Shopping", "completed_by":28},
+            {"name": "Health", "completed_by":40}
+        ]
+        with self.client:
+            for item in bucketlists:
+                self.client.post(
+                    'bucketlists',
+                    data=json.dumps(item),
+                    content_type="application/json",
+                    headers=dict(Authorization='Bearer ' + self.token)
+                )
+            response = self.client.get(
+                'bucketlists?limit=3',
+                content_type="application/json",
+                headers=dict(Authorization='Bearer ' + self.token)
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(3, len(data['bucketlists']))
