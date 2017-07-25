@@ -29,6 +29,13 @@ class TestBucketListCase(BaseTestCase):
             content_type="application/json",
             headers=dict(Authorization='Bearer ' + self.token)
         )
+        # create bucket list items 
+        self.client.post(
+                'bucketlists/1/items',
+                data=json.dumps(dict(name="Become a Partner")),
+                content_type="application/json",
+                headers=dict(Authorization='Bearer ' + self.token)
+                )
 
     def test_create_bucket_lists(self):
         """ Ensure that bucketlists can be created and retrieved """
@@ -104,3 +111,45 @@ class TestBucketListCase(BaseTestCase):
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertDictEqual(data, {'bucketlist': {}})
+
+    def test_create_bucketlist_item(self):
+        """ Ensure that bucketlist items can be added and retrieved """
+        with self.client:
+            response = self.client.post(
+                'bucketlists/1/items',
+                data=json.dumps(dict(name="Become a Partner")),
+                content_type="application/json",
+                headers=dict(Authorization='Bearer ' + self.token)
+                )
+            data = json.loads(response.data.decode())
+            self.assertEqual(data["status"], "Success")
+
+    def test_delete_bucketlists_item(self):
+        """ Ensure that buckelist items can be deleted"""
+        with self.client:
+            response = self.client.delete(
+                'bucketlists/1/items/1',
+                content_type="application/json",
+                headers=dict(Authorization='Bearer ' + self.token)
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertDictEqual(data, {'item': {}})
+
+    def test_update_bucketlists_items(self):
+        """ Ensure that buckelists items can be updated"""
+        with self.client:
+            response = self.client.put(
+                'bucketlists/1/items/1',
+                data=json.dumps(dict(name="Adventure", completed=True)),
+                content_type="application/json",
+                headers=dict(Authorization='Bearer ' + self.token)
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertDictEqual(data, {'item': {
+                "id": 1,
+                "name": "Adventure",
+                "completed": True
+            }})
+    
