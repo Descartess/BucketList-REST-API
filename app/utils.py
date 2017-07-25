@@ -33,6 +33,7 @@ def validate_auth_json(function):
 
 def login_required(function):
     """ utility  decorator function to check is user is authenticated """
+    @wraps(function)
     def decorated(*args, **kwargs):
         """ decorator function logic """
         response_object = {
