@@ -22,6 +22,13 @@ def post_get_bucketlist(user):
             'status': 'Success'
         }
         return jsonify(reponse_object), 201
+    # api searching based on name attribute
+    q = request.args.get('q')
+    if q:
+        bucketlists = BucketLists.query.filter(
+            BucketLists.name.ilike("%" + q + "%"), BucketLists.owner == user).all()
+        return jsonify({'search_results': [bucketlist.to_json() for bucketlist in bucketlists]})
+    # get request without search argument
     bucketlists = BucketLists.query.filter_by(owner=user)
     return jsonify({'bucketlists': [bucketlist.to_json() for bucketlist in bucketlists]})
 
@@ -48,21 +55,24 @@ def retrive_update_bucketlist(user, bucketlist_id):
             db.session.delete(bucketlist)
             db.session.commit()
             return jsonify({'bucketlist': {}})
-    return jsonify({ "status": "Error", "message": "Forbidden"}),400
+    return jsonify({"status": "Error", "message": "Forbidden"}), 400
+
 
 @bucketlist_blueprint.route('/<int:bucketlist_id>/items', methods=['POST', 'GET'])
 @login_required
 def create_bucketlist_item(user, bucketlist_id):
     """ Create a new bucket list item """
     bucketlist = BucketLists.query.filter_by(
-            id=bucketlist_id, owner=user).first()
+        id=bucketlist_id, owner=user).first()
     if bucketlist:
         post_data = request.get_json()
-        item = BucketListItems(name=post_data.get("name"), bucket_list=bucketlist)
+        item = BucketListItems(name=post_data.get(
+            "name"), bucket_list=bucketlist)
         db.session.add(item)
         db.session.commit()
         return jsonify({'status': 'Success'}), 201
-    return jsonify({ "status": "Error", "message": "Forbidden"}),400
+    return jsonify({"status": "Error", "message": "Forbidden"}), 400
+
 
 @bucketlist_blueprint.route('/<int:bucketlist_id>/items/<int:item_id>', methods=['PUT', 'DELETE'])
 @login_required
@@ -70,7 +80,8 @@ def edit_del_bucketlist_item(user, bucketlist_id, item_id):
     """ Edit/ Delete bucket list item """
     bucketlist = BucketLists.query.filter_by(
         id=bucketlist_id, owner=user).first()
-    item = BucketListItems.query.filter_by(id=item_id,bucket_list=bucketlist).first()
+    item = BucketListItems.query.filter_by(
+        id=item_id, bucket_list=bucketlist).first()
     if item:
         if request.method == "PUT":
             put_data = request.get_json()
@@ -83,4 +94,4 @@ def edit_del_bucketlist_item(user, bucketlist_id, item_id):
             db.session.delete(item)
             db.session.commit()
             return jsonify({'item': {}})
-    return jsonify({ "status": "Error", "message": "Forbidden"}),400
+    return jsonify({"status": "Error", "message": "Forbidden"}), 400
