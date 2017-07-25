@@ -152,4 +152,21 @@ class TestBucketListCase(BaseTestCase):
                 "name": "Adventure",
                 "completed": True
             }})
-    
+    def test_bucketlist_search(self):
+        """ Ensure that search queries are executed """
+        with self.client:
+            response = self.client.get(
+                'bucketlists?q=career',
+                content_type="application/json",
+                headers=dict(Authorization='Bearer ' + self.token)
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertDictEqual(data, {'search_results': [{
+                "id": 1,
+                "name": "Career",
+                "completed_by": 30
+            }]})
+         
+
+
