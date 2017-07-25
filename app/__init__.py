@@ -2,11 +2,13 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate
 from config import config
 
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
+migrate = Migrate()
 
 
 def create_app(config_name):
@@ -17,6 +19,7 @@ def create_app(config_name):
     # set up the extensions
     db.init_app(app)
     bcrypt.init_app(app)
+    migrate.init_app(app, db)
 
     # register blueprints
     from app.api.auth import auth_blueprint
