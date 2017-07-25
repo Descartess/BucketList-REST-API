@@ -24,6 +24,28 @@ def post_get_bucketlist(user):
         return jsonify(reponse_object), 201
     bucketlists = BucketLists.query.filter_by(owner=user)
     return jsonify({'bucketlists': [bucketlist.to_json() for bucketlist in bucketlists]})
+
+
+@bucketlist_blueprint.route('/<int:bucketlist_id>', methods=['GET', 'PUT', 'DELETE'])
+@login_required
+def retrive_update_bucketlist(user,bucketlist_id):
+    """ Retrieve or update bucketlist based solely on its ID"""
+    bucketlist = BucketLists.query.filter_by(id=bucketlist_id,owner=user).first()
+    if request.method == "PUT":
+        put_data = request.get_json()
+        name = put_data.get('name')
+        completed_by = put_data.get('completed_by')
+        bucketlist.name = name
+        bucketlist.completed_by = completed_by
+        db.session.add(bucketlist)
+        db.session.commit()
+        return jsonify({'bucketlist': bucketlist.to_json()})
+    elif request.method == "GET":
+        return jsonify({'bucketlist': bucketlist.to_json()})
+    elif request.method == "DELETE":
+        db.session.delete(bucketlist)
+        db.session.commit()
+        return jsonify({'bucketlist': {}})
     
     
     
