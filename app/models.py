@@ -68,7 +68,8 @@ class BucketLists(db.Model):
         json_data = {
             'id' : self.id,
             'name' :self.name,
-            'completed_by' : self.completed_by
+            'completed_by' : self.completed_by,
+            'items' : [item.to_json() for item in self.bucket_lists_items.all()]
         }
         return json_data
 
