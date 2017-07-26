@@ -1,8 +1,8 @@
 """ Authentication functionality """
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from sqlalchemy.exc import IntegrityError
 from app import db, bcrypt
-from app.utils import add_user, validate_auth_json
+from app.utils import add_user, validate_auth_json,login_required
 from app.models import Users
 
 auth_blueprint = Blueprint('auth', __name__)
@@ -66,3 +66,42 @@ def login():
             'token': None
         }
         return jsonify(response_object), 400
+
+
+@auth_blueprint.route('/reset-password', methods=["POST"])
+@login_required
+def reset_password(user):
+    """ Enable users to reset passwords """
+    post_data = request.get_json()
+    old_password = post_data.get('old_password')
+    new_password = post_data.get('new_password')
+    # check if old password is correct
+    if bcrypt.check_password_hash(user.password, old_password):
+        user.password = bcrypt.generate_password_hash(
+            new_password, current_app.config.get('BCRYPT_LOG_ROUNDS'))
+        db.session.add(user)
+        db.session.commit()
+        auth_token = user.encode_auth_token(user.id)
+        if auth_token:
+            response_object = {
+                "status": "Success",
+                "mesage": "Password changed",
+                "token": auth_token.decode()
+            }
+            return jsonify(response_object), 201
+    response_object = {
+        "status": "Fail",
+        "mesage": "Invalid credentials",
+        "token": None
+    }
+    return jsonify(response_object), 400
+
+@auth_blueprint.route('/logout', methods=["GET"])
+@login_required
+def logout(user):
+    """ Log out user """
+    response_object = {
+        "status" : "Success",
+        "message": " Log Out successful"
+    }
+    return jsonify(response_object), 200
