@@ -20,6 +20,13 @@ def validate_auth_json(function):
         """ Flask validation of authentication json """
         if request.method == "POST":
             post_data = request.get_json()
+            if not post_data:
+                response_object = {
+                    'status': 'Fail',
+                    'message': 'Invalid payload',
+                    'token': None
+                }
+                return jsonify(response_object), 400
             if not post_data.get('username') or not post_data.get('password'):
                 response_object = {
                     'status': 'Fail',
