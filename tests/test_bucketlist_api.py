@@ -53,7 +53,8 @@ class TestBucketListCase(BaseTestCase):
             self.assertDictEqual(data, {'bucketlists': [{
                 "id": 1,
                 "name": "Career",
-                "completed_by": 30
+                "completed_by": 30,
+                "items": [{"completed": False,"id": 1, "name": "Become a Partner"}]
             }]})
 
     def test_no_auth_token(self):
@@ -80,7 +81,8 @@ class TestBucketListCase(BaseTestCase):
             self.assertDictEqual(data, {'bucketlist': {
                 "id": 1,
                 "name": "Career",
-                "completed_by": 30
+                "completed_by": 30,
+                "items": [{"completed": False,"id": 1, "name": "Become a Partner"}]
             }})
 
     def test_update_bucketlists_with_id(self):
@@ -97,7 +99,8 @@ class TestBucketListCase(BaseTestCase):
             self.assertDictEqual(data, {'bucketlist': {
                 "id": 1,
                 "name": "Adventure",
-                "completed_by": 25
+                "completed_by": 25,
+                "items": [{"completed": False,"id": 1, "name": "Become a Partner"}]
             }})
 
     def test_delete_bucketlists_with_id(self):
@@ -165,7 +168,8 @@ class TestBucketListCase(BaseTestCase):
             self.assertDictEqual(data, {'search_results': [{
                 "id": 1,
                 "name": "Career",
-                "completed_by": 30
+                "completed_by": 30,
+                "items": [{"completed": False,"id": 1, "name": "Become a Partner"}]
             }]})
 
     def test_pagination(self):
