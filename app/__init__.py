@@ -1,6 +1,8 @@
 """ __init__.py """
-from flask import Flask, jsonify
+import os
+from flask import Flask, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flasgger import Swagger
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from config import config
@@ -9,6 +11,8 @@ from config import config
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 migrate = Migrate()
+swagger = Swagger()
+
 
 
 def create_app(config_name):
@@ -19,12 +23,14 @@ def create_app(config_name):
     # set up the extensions
     db.init_app(app)
     bcrypt.init_app(app)
+    swagger.init_app(app)
     migrate.init_app(app, db)
 
     # register blueprints
     from app.api.auth import auth_blueprint
     from app.api.bucketlists import bucketlist_blueprint
+    
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     app.register_blueprint(bucketlist_blueprint, url_prefix='/bucketlists')
-    
+
     return app
