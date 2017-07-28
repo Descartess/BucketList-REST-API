@@ -9,6 +9,9 @@ class BaseConfig:
     BCRYPT_LOG_ROUNDS = 12
     TOKEN_EXPIRATION_DAYS = 30
     TOKEN_EXPIRATION_SECONDS = 0
+    SWAGGER = {
+        'title': 'BucketList Rest API'
+    }
 
 class DevelopmentConfig(BaseConfig):
     """ Development configuration """
