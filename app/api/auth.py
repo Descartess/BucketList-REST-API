@@ -11,7 +11,33 @@ auth_blueprint = Blueprint('auth', __name__)
 @auth_blueprint.route('/register', methods=['POST'])
 @validate_auth_json
 def register():
-    """ Register a new user """
+    """ Register a new user 
+    ---
+    tags:
+      - "auth"
+    parameters:
+      - in: "body"
+        name: "body"
+        description: "Username and password submitted"
+        required: true
+        schema:
+          type: "object"
+          required:
+          - "username"
+          - "password"
+          properties:
+            username:
+              type: "string"
+            password:
+              type: "string"
+    responses:
+        400:
+          description: " Username is already taken"
+        200:
+          description: " Success"
+        405:
+          description: " Invalid Payload"
+    """
     post_data = request.get_json()
     username = post_data.get('username')
     password = post_data.get('password')
@@ -39,7 +65,33 @@ def register():
 @auth_blueprint.route('/login', methods=["POST"])
 @validate_auth_json
 def login():
-    """ Login in old users """
+    """ Login in old users 
+    ---
+    tags:
+      - "auth"
+    parameters:
+      - in: "body"
+        name: "body"
+        description: "Username and password submitted"
+        required: true
+        schema:
+          type: "object"
+          required:
+          - "username"
+          - "password"
+          properties:
+            username:
+              type: "string"
+            password:
+              type: "string"
+    responses:
+        400:
+          description: " Invalid credentials"
+        200:
+          description: " Success"
+        405:
+          description: " Invalid Payload"
+    """
     post_data = request.get_json()
     username = post_data.get('username')
     password = post_data.get('password')
@@ -71,7 +123,36 @@ def login():
 @auth_blueprint.route('/reset-password', methods=["POST"])
 @login_required
 def reset_password(user):
-    """ Enable users to reset passwords """
+    """ Enable users to reset passwords
+    ---
+    tags:
+      - "auth"
+    parameters:
+      - in: "body"
+        name: "body"
+        description: "Username and password submitted"
+        required: true
+        schema:
+          type: "object"
+          required:
+          - "username"
+          - "old_password"
+          - "new_password"
+          properties:
+            username:
+              type: "string"
+            old_password:
+              type: "string"
+            new_password:
+              type: "string"
+    responses:
+        400:
+          description: " Invalid credentials"
+        200:
+          description: " Success"
+        405:
+          description: " Invalid Payload"
+    """
     post_data = request.get_json()
     old_password = post_data.get('old_password')
     new_password = post_data.get('new_password')
@@ -99,7 +180,16 @@ def reset_password(user):
 @auth_blueprint.route('/logout', methods=["GET"])
 @login_required
 def logout(user):
-    """ Log out user """
+    """ Log out user 
+    ---
+    tags:
+      - "auth"
+    responses:
+        400:
+          description: " Invalid credentials"
+        200:
+          description: " Success"
+    """
     response_object = {
         "status" : "Success",
         "message": " Log Out successful"
