@@ -1,6 +1,7 @@
 """ __init__.py """
 import os
 from flask import Flask, jsonify, url_for
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flasgger import Swagger
 from flask_bcrypt import Bcrypt
@@ -21,6 +22,7 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     # set up the extensions
+    CORS(app)
     db.init_app(app)
     bcrypt.init_app(app)
     swagger.init_app(app)
