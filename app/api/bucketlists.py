@@ -151,7 +151,7 @@ def update_bucketlist(user, bucketlist_id):
         bucketlist.completed_by = completed_by
         db.session.add(bucketlist)
         db.session.commit()
-        return jsonify({'bucketlist': bucketlist.to_json()})
+        return jsonify({'bucketlist': bucketlist.to_json() })
     return jsonify({"status": "Error", "message": "Forbidden"}), 400
 
 @bucketlist_blueprint.route('/<int:bucketlist_id>/items', methods=['POST'])
