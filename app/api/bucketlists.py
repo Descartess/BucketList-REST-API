@@ -221,7 +221,7 @@ def create_bucketlist_item(user, bucketlist_id):
             "name"), bucket_list=bucketlist)
         db.session.add(item)
         db.session.commit()
-        return jsonify({'status': 'Success', 'item': item.to_json()}), 201
+        return jsonify({'status': 'Success', 'bucketlist': bucketlist.to_json()}), 201
     return jsonify({"status": "Error", "message": "Item doesn't exist"}), 404
 
 
@@ -267,7 +267,7 @@ def edit_bucketlist_item(user, bucketlist_id, item_id):
         item.completed = put_data.get('completed')
         db.session.add(item)
         db.session.commit()
-        return jsonify({'item': item.to_json()})
+        return jsonify({'bucketlist': bucketlist.to_json()})
     return jsonify({"status": "Error", "message": "Item doesn't exist"}), 404
 
 
@@ -298,5 +298,8 @@ def del_bucketlist_item(user, bucketlist_id, item_id):
         id = item.id
         db.session.delete(item)
         db.session.commit()
-        return jsonify({'item': id, 'message': 'Item successfully deleted'})
+        return jsonify({'item': id,
+                        'message': 'Item successfully deleted',
+                        'bucketlist':bucketlist.to_json()
+                       })
     return jsonify({"status": "Error", "message": "Item doesn't exist"}), 404
