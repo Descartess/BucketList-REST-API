@@ -120,12 +120,22 @@ class TestBucketListCase(BaseTestCase):
         with self.client:
             response = self.client.post(
                 'bucketlists/1/items',
-                data=json.dumps(dict(name="Become a Partner")),
+                data=json.dumps(dict(name="Become a Jedi")),
                 content_type="application/json",
                 headers=dict(Authorization='Bearer ' + self.token)
                 )
             data = json.loads(response.data.decode())
-            self.assertEqual(data["status"], "Success")
+            self.assertDictEqual(data, {
+                'status': 'Success',
+                'bucketlist': {
+                    "id": 1,
+                    "name": "Career",
+                    "completed_by": 30,
+                    "items": [
+                        {'completed': False, 'id': 1, 'name': 'Become a Partner'},
+                        {'completed': False, 'id': 2, 'name': 'Become a Jedi'}
+                        ]
+                }})
 
     def test_delete_bucketlists_item(self):
         """ Ensure that buckelist items can be deleted"""
@@ -137,7 +147,16 @@ class TestBucketListCase(BaseTestCase):
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertDictEqual(data, {'item': 1, 'message': 'Item successfully deleted'})
+            self.assertDictEqual(data, {
+                'item': 1,
+                'message': 'Item successfully deleted',
+                'bucketlist': {
+                    "id": 1,
+                    "name": "Career",
+                    "completed_by": 30,
+                    "items": []
+                }
+            })
 
     def test_update_bucketlists_items(self):
         """ Ensure that buckelists items can be updated"""
@@ -150,11 +169,13 @@ class TestBucketListCase(BaseTestCase):
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertDictEqual(data, {'item': {
-                "id": 1,
-                "name": "Adventure",
-                "completed": True
-            }})
+            self.assertDictEqual(data, {
+                'bucketlist': {
+                    "id": 1,
+                    "name": "Career",
+                    "completed_by": 30,
+                    "items": [{'completed': True, 'id': 1, 'name': 'Adventure'}]
+                }})
     def test_bucketlist_search(self):
         """ Ensure that search queries are executed """
         with self.client:
