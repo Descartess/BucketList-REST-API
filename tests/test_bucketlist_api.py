@@ -113,7 +113,7 @@ class TestBucketListCase(BaseTestCase):
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertDictEqual(data, {'bucketlist': {}})
+            self.assertDictEqual(data, {'bucketlist': 1, 'message': 'bucketlist successfully deleted'})
 
     def test_create_bucketlist_item(self):
         """ Ensure that bucketlist items can be added and retrieved """
@@ -137,7 +137,7 @@ class TestBucketListCase(BaseTestCase):
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
-            self.assertDictEqual(data, {'item': {}})
+            self.assertDictEqual(data, {'item': 1, 'message': 'Item successfully deleted'})
 
     def test_update_bucketlists_items(self):
         """ Ensure that buckelists items can be updated"""
