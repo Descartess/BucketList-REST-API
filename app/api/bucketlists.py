@@ -10,11 +10,15 @@ bucketlist_blueprint = Blueprint('bucketlists', __name__)
 @login_required
 def post_bucketlist(user):
     """ Create bucketlists
-    file: defs.yml
     ---
     tags:
       - "bucketlists"
     parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: "bucketlist and the age of completion"
@@ -54,6 +58,12 @@ def get_bucketlist(user):
     ---
     tags:
       - "bucketlists"
+    parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
     responses:
         200:
             description: "successful operation"
@@ -81,10 +91,16 @@ def retrive_bucketlist(user, bucketlist_id):
     ---
     tags:
       - "bucketlists"
+    parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
     responses:
         200:
           description: "successful operation"
-        400:
+        404:
           description: "Item doesn't exist"
     """
     bucketlist = BucketLists.query.filter_by(
@@ -100,11 +116,17 @@ def del_bucketlist(user, bucketlist_id):
     ---
     tags:
       - "bucketlists"
+    parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
     responses:
         200:
           description: "successful operation"
-        400:
-          description: "Forbidden"
+        404:
+          description: "Item doesn't exist"
     """
     bucketlist = BucketLists.query.filter_by(
         id=bucketlist_id, owner=user).first()
@@ -123,6 +145,11 @@ def update_bucketlist(user, bucketlist_id):
     tags:
       - "bucketlists"
     parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: ""
@@ -164,6 +191,11 @@ def create_bucketlist_item(user, bucketlist_id):
     tags:
       - "bucketlists items"
     parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: ""
@@ -201,6 +233,11 @@ def edit_bucketlist_item(user, bucketlist_id, item_id):
     tags:
       - "bucketlists items"
     parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: ""
@@ -217,7 +254,7 @@ def edit_bucketlist_item(user, bucketlist_id, item_id):
     responses:
         200:
           description: "successful operation"
-        400:
+        404:
           description: "Item doesn't exist"
     """
     bucketlist = BucketLists.query.filter_by(
@@ -241,10 +278,16 @@ def del_bucketlist_item(user, bucketlist_id, item_id):
     ---
     tags:
       - "bucketlists items"
+    parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
     responses:
         200:
           description: "successful operation"
-        400:
+        404:
           description: "Item doesn't exist"
     """
     bucketlist = BucketLists.query.filter_by(
