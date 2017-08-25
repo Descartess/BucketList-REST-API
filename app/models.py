@@ -57,7 +57,7 @@ class BucketLists(db.Model):
     """ Model for bucket lists """
     __tablename__ = 'bucketlists'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(64), nullable=False, unique=True)
     completed_by = db.Column(db.Integer, nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     bucket_lists_items = db.relationship(
