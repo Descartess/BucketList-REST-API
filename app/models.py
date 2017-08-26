@@ -13,7 +13,7 @@ class Users(db.Model):
                          index=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     bucket_lists = db.relationship(
-        'BucketLists', backref="owner", lazy="dynamic")
+        'BucketLists', backref="owner", lazy="dynamic", cascade="delete, delete-orphan")
 
     def __init__(self, username, password):
         self.username = username
@@ -57,11 +57,11 @@ class BucketLists(db.Model):
     """ Model for bucket lists """
     __tablename__ = 'bucketlists'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(64), nullable=False, unique=True)
     completed_by = db.Column(db.Integer, nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     bucket_lists_items = db.relationship(
-        'BucketListItems', backref="bucket_list", lazy="dynamic")
+        'BucketListItems', backref="bucket_list", lazy="dynamic", cascade="delete, delete-orphan")
 
     def to_json(self):
         """ Convert bucket list model to json format """

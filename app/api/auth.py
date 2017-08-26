@@ -128,6 +128,11 @@ def reset_password(user):
     tags:
       - "auth"
     parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: "Username and password submitted"
@@ -184,6 +189,12 @@ def logout(user):
     ---
     tags:
       - "auth"
+    parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
     responses:
         400:
           description: " Invalid credentials"

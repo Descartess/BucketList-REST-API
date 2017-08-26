@@ -10,11 +10,15 @@ bucketlist_blueprint = Blueprint('bucketlists', __name__)
 @login_required
 def post_bucketlist(user):
     """ Create bucketlists
-    file: defs.yml
     ---
     tags:
       - "bucketlists"
     parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: "bucketlist and the age of completion"
@@ -42,7 +46,8 @@ def post_bucketlist(user):
     db.session.add(blist)
     db.session.commit()
     reponse_object = {
-        'status': 'Success'
+        'status': 'Success',
+        'bucketlist': blist.to_json()
     }
     return jsonify(reponse_object), 201
 
@@ -53,6 +58,12 @@ def get_bucketlist(user):
     ---
     tags:
       - "bucketlists"
+    parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
     responses:
         200:
             description: "successful operation"
@@ -80,17 +91,23 @@ def retrive_bucketlist(user, bucketlist_id):
     ---
     tags:
       - "bucketlists"
+    parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
     responses:
         200:
           description: "successful operation"
-        400:
-          description: "Forbidden"
+        404:
+          description: "Item doesn't exist"
     """
     bucketlist = BucketLists.query.filter_by(
         id=bucketlist_id, owner=user).first()
     if bucketlist:
         return jsonify({'bucketlist': bucketlist.to_json()})
-    return jsonify({"status": "Error", "message": "Forbidden"}), 400
+    return jsonify({"status": "Error", "message": "Item doesn't exist"}), 404
 
 @bucketlist_blueprint.route('/<int:bucketlist_id>', methods=['DELETE'])
 @login_required
@@ -99,19 +116,26 @@ def del_bucketlist(user, bucketlist_id):
     ---
     tags:
       - "bucketlists"
+    parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
     responses:
         200:
           description: "successful operation"
-        400:
-          description: "Forbidden"
+        404:
+          description: "Item doesn't exist"
     """
     bucketlist = BucketLists.query.filter_by(
         id=bucketlist_id, owner=user).first()
     if bucketlist:
+        id = bucketlist.id
         db.session.delete(bucketlist)
         db.session.commit()
-        return jsonify({'bucketlist': {}})
-    return jsonify({"status": "Error", "message": "Forbidden"}), 400
+        return jsonify({'bucketlist': id, 'message': 'bucketlist successfully deleted'})
+    return jsonify({"status": "Error", "message": "Item doesn't exist"}), 404
 
 @bucketlist_blueprint.route('/<int:bucketlist_id>', methods=['PUT'])
 @login_required
@@ -121,6 +145,11 @@ def update_bucketlist(user, bucketlist_id):
     tags:
       - "bucketlists"
     parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: ""
@@ -139,7 +168,7 @@ def update_bucketlist(user, bucketlist_id):
         200:
           description: "successful operation"
         400:
-          description: "Forbidden"
+          description: "Item doesn't exist"
     """
     bucketlist = BucketLists.query.filter_by(
         id=bucketlist_id, owner=user).first()
@@ -152,7 +181,7 @@ def update_bucketlist(user, bucketlist_id):
         db.session.add(bucketlist)
         db.session.commit()
         return jsonify({'bucketlist': bucketlist.to_json() })
-    return jsonify({"status": "Error", "message": "Forbidden"}), 400
+    return jsonify({"status": "Error", "message": "Item doesn't exist"}), 404
 
 @bucketlist_blueprint.route('/<int:bucketlist_id>/items', methods=['POST'])
 @login_required
@@ -162,6 +191,11 @@ def create_bucketlist_item(user, bucketlist_id):
     tags:
       - "bucketlists items"
     parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: ""
@@ -177,7 +211,7 @@ def create_bucketlist_item(user, bucketlist_id):
         200:
           description: "successful operation"
         400:
-          description: "Forbidden" 
+          description: "Item doesn't exist" 
     """
     bucketlist = BucketLists.query.filter_by(
         id=bucketlist_id, owner=user).first()
@@ -187,8 +221,8 @@ def create_bucketlist_item(user, bucketlist_id):
             "name"), bucket_list=bucketlist)
         db.session.add(item)
         db.session.commit()
-        return jsonify({'status': 'Success'}), 201
-    return jsonify({"status": "Error", "message": "Forbidden"}), 400
+        return jsonify({'status': 'Success', 'bucketlist': bucketlist.to_json()}), 201
+    return jsonify({"status": "Error", "message": "Item doesn't exist"}), 404
 
 
 @bucketlist_blueprint.route('/<int:bucketlist_id>/items/<int:item_id>', methods=['PUT'])
@@ -199,6 +233,11 @@ def edit_bucketlist_item(user, bucketlist_id, item_id):
     tags:
       - "bucketlists items"
     parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
       - in: "body"
         name: "body"
         description: ""
@@ -215,8 +254,8 @@ def edit_bucketlist_item(user, bucketlist_id, item_id):
     responses:
         200:
           description: "successful operation"
-        400:
-          description: "Forbidden"
+        404:
+          description: "Item doesn't exist"
     """
     bucketlist = BucketLists.query.filter_by(
         id=bucketlist_id, owner=user).first()
@@ -228,8 +267,8 @@ def edit_bucketlist_item(user, bucketlist_id, item_id):
         item.completed = put_data.get('completed')
         db.session.add(item)
         db.session.commit()
-        return jsonify({'item': item.to_json()})
-    return jsonify({"status": "Error", "message": "Forbidden"}), 400
+        return jsonify({'bucketlist': bucketlist.to_json()})
+    return jsonify({"status": "Error", "message": "Item doesn't exist"}), 404
 
 
 @bucketlist_blueprint.route('/<int:bucketlist_id>/items/<int:item_id>', methods=['DELETE'])
@@ -239,18 +278,28 @@ def del_bucketlist_item(user, bucketlist_id, item_id):
     ---
     tags:
       - "bucketlists items"
+    parameters:
+      - name: "Authorization"
+        in: "header"
+        description: "Token of a logged in user"
+        required: true
+        type: "string"
     responses:
         200:
           description: "successful operation"
-        400:
-          description: "Forbidden"
+        404:
+          description: "Item doesn't exist"
     """
     bucketlist = BucketLists.query.filter_by(
         id=bucketlist_id, owner=user).first()
     item = BucketListItems.query.filter_by(
         id=item_id, bucket_list=bucketlist).first()
     if item:
+        id = item.id
         db.session.delete(item)
         db.session.commit()
-        return jsonify({'item': {}})
-    return jsonify({"status": "Error", "message": "Forbidden"}), 400
+        return jsonify({'item': id,
+                        'message': 'Item successfully deleted',
+                        'bucketlist':bucketlist.to_json()
+                       })
+    return jsonify({"status": "Error", "message": "Item doesn't exist"}), 404

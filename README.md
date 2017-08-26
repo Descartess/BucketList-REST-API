@@ -5,6 +5,7 @@
 
 **BucketList** is a web application designed to help one to record, edit, update activities one desires to accomplish before reaching a certain age. This application exposes a rest API which can be consumed
 
+This is deployed on heroku with a base url http://descartes-bucketlist.herokuapp.com/
 
 ## Technologies
 1. Python 2.7
@@ -37,7 +38,7 @@ python manage.py recreate_db
 ```
 
 ## Documentation
-The API documentation can be found at 
+The API documentation can be found at http://descartes-bucketlist.herokuapp.com/apidocs/
 ```
 http://localhost:5000/apidocs/
 ```
