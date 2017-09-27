@@ -177,7 +177,7 @@ def reset_password(user):
             return jsonify(response_object), 201
     response_object = {
         "status": "Fail",
-        "mesage": "Invalid credentials",
+        "message": "Invalid credentials",
         "token": None
     }
     return jsonify(response_object), 400
